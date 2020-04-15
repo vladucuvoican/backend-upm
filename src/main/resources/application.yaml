@@ -42,8 +42,8 @@ spring:
       passowrd: user
   liquibase:
     change-log: classpath:/db/changelog/db.changelog-master.xml
-    database-change-log-table: upm_change_log
-    database-change-log-lock-table: upm_change_log_lock
+    database-change-log-table: pmp_change_log
+    database-change-log-lock-table: pmp_change_log_lock
 
 logging:
   level:
@@ -67,7 +67,7 @@ spring:
       minimum-idle: 30
       idle-timeout: 3000
       pool-name: HikariCP
-      jdbcUrl: ${JDBC_URL:jdbc:postgresql://database:5433/upm}
+      jdbcUrl: ${JDBC_URL:jdbc:postgresql://database:5433/pmp}
       username: user
       password: user
       driver-class-name: org.postgresql.Driver
@@ -95,7 +95,7 @@ spring:
       minimum-idle: 30
       idle-timeout: 3000
       poolName: HikariCP
-      jdbcUrl: ${JDBC_URL:jdbc:postgresql://localhost:5433/upm}
+      jdbcUrl: ${JDBC_URL:jdbc:postgresql://localhost:5433/pmp}
       username: user
       password: user
       driverClassName: org.postgresql.Driver

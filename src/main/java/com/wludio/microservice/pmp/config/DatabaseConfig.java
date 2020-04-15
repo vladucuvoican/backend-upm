@@ -1,4 +1,4 @@
-package com.wludio.microservice.upm.config;
+package com.wludio.microservice.pmp.config;
 
 
 import com.zaxxer.hikari.HikariConfig;
@@ -14,7 +14,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories("com.wludio.microservice.upm.persistence.repository")
+@EnableJpaRepositories("com.wludio.microservice.pmp.persistence.repository")
 @EnableTransactionManagement
 @ConfigurationProperties(prefix = "spring.datasource.hikari")
 public class DatabaseConfig extends HikariConfig {

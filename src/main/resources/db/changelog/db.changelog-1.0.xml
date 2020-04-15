@@ -1,0 +1,135 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="0" author="vv">
+        <sql>
+            CREATE SCHEMA platform_management;
+            CREATE SCHEMA user_management;
+        </sql>
+    </changeSet>
+
+    <changeSet id="pmp_create_tables" author="Vladucu Voican">
+        <createTable tableName="user" schemaName="user_management">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="user_pk" nullable="false" unique="true"/>
+            </column>
+            <column name="state" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="is_deleted" type="boolean" defaultValue="false"><constraints nullable="false"/></column>
+            <column name="username" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="password" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="first_name" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="last_name" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="avatar" type="varchar(255)"><constraints nullable="true"/></column>
+            <column name="role" type="varchar(255)"><constraints nullable="false"/></column>
+        </createTable>
+        <addUniqueConstraint tableName="user" schemaName="user_management" columnNames="username" />
+
+        <createTable tableName="product" schemaName="platform_management">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="product_pk" nullable="false" unique="true"/>
+            </column>
+            <column name="state" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="is_deleted" type="boolean" defaultValue="false"><constraints nullable="false"/></column>
+            <column name="title" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="image" type="varchar(255)"><constraints nullable="true"/></column>
+            <column name="price_per_unit" type="double"><constraints nullable="false"/></column>
+            <column name="currency" type="varchar(10)"><constraints nullable="false"/></column>
+            <column name="quantity" type="bigint"><constraints nullable="false"/></column>
+            <column name="unit" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="description" type="varchar(1000)"><constraints nullable="true"/></column>
+        </createTable>
+        <createTable tableName="order" schemaName="platform_management">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="order_pk" nullable="false" unique="true"/>
+            </column>
+            <column name="state" type="varchar(255)"><constraints nullable="false"/></column>
+            <column name="is_deleted" type="boolean" defaultValue="false"><constraints nullable="false"/></column>
+            <column name="currency" type="varchar(10)"><constraints nullable="false"/></column>
+            <column name="user_id" type="bigint"><constraints nullable="false" unique="true"/></column>
+            <column name="total_price" type="double"><constraints nullable="false"/></column>
+            <column name="purchase_date" type="datetime"><constraints nullable="false"/></column>
+            <column name="note" type="varchar(1000)"><constraints nullable="true"/></column>
+        </createTable>
+        <addForeignKeyConstraint referencedColumnNames="id"
+                                 referencedTableName="user"
+                                 referencedTableSchemaName="user_management"
+                                 constraintName="fk_order_user_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+                                 baseColumnNames="user_id"
+                                 baseTableName="order"
+                                 baseTableSchemaName="platform_management" />
+        <createTable tableName="order_entry" schemaName="platform_management">
+            <column name="id" type="bigint" autoIncrement="true" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="order_entry_pk" nullable="false" unique="true"/>
+            </column>
+            <column name="is_deleted" type="boolean" defaultValue="false"><constraints nullable="false"/></column>
+            <column name="product_id" type="bigint" ><constraints nullable="false" unique="true"/></column>
+            <column name="order_id" type="bigint"><constraints nullable="false" unique="true"/></column>
+            <column name="currency" type="varchar(10)"><constraints nullable="false"/></column>
+            <column name="price_per_unit" type="double"><constraints nullable="false"/></column>
+            <column name="quantity" type="bigint"><constraints nullable="false"/></column>
+            <column name="unit" type="varchar(255)"><constraints nullable="false"/></column>
+        </createTable>
+        <addForeignKeyConstraint referencedColumnNames="id"
+                                 referencedTableName="product"
+                                 referencedTableSchemaName="platform_management"
+                                 constraintName="fk_order_entry_product_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+                                 baseColumnNames="product_id"
+                                 baseTableName="order_entry"
+                                 baseTableSchemaName="platform_management" />
+        <addForeignKeyConstraint referencedColumnNames="id"
+                                 referencedTableName="order"
+                                 referencedTableSchemaName="platform_management"
+                                 constraintName="fk_order_entry_order_id"
+                                 onDelete="CASCADE"
+                                 onUpdate="CASCADE"
+                                 baseColumnNames="order_id"
+                                 baseTableName="order_entry"
+                                 baseTableSchemaName="platform_management" />
+    </changeSet>
+
+    <changeSet id="pmp_add_init_data" author="vv">
+        <insert tableName="user" schemaName="user_management">
+            <column name="is_deleted"  value="false"/>
+            <column name="state" value="APPROVED"/>
+            <column name="username" value="admin"/>
+            <column name="password" value="admin"/>
+            <column name="first_name"  value="Admin"/>
+            <column name="last_name"  value="Admin"/>
+            <column name="role"  value="ADMIN"/>
+        </insert>
+        <insert tableName="product" schemaName="platform_management">
+            <column name="is_deleted"  value="false"/>
+            <column name="title" value="Orange"/>
+            <column name="currency" value="EUR"/>
+            <column name="price_per_unit" value="19.99"/>
+            <column name="unit" value="KG"/>
+            <column name="quantity" value="1000"/>
+            <column name="currency" value="EUR"/>
+            <column name="state" value="IN_STOCK" />
+        </insert>
+        <insert tableName="product" schemaName="platform_management">
+            <column name="is_deleted"  value="false"/>
+            <column name="title" value="Pineapple"/>
+            <column name="currency" value="EUR"/>
+            <column name="price_per_unit" value="9.99"/>
+            <column name="unit" value="KG"/>
+            <column name="quantity" value="853"/>
+            <column name="currency" value="EUR"/>
+            <column name="state" value="IN_STOCK" />
+        </insert>
+        <insert tableName="product" schemaName="platform_management">
+            <column name="is_deleted"  value="false"/>
+            <column name="title" value="Lemons"/>
+            <column name="currency" value="EUR"/>
+            <column name="price_per_unit" value="29.99"/>
+            <column name="unit" value="KG"/>
+            <column name="quantity" value="0"/>
+            <column name="currency" value="EUR"/>
+            <column name="state" value="OUT_OF_STOCK" />
+        </insert>
+    </changeSet>
+</databaseChangeLog>
